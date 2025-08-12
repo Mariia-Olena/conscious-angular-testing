@@ -38,12 +38,12 @@ describe('ButtonComponent', () => {
   });
 
   it('should show loader icon in "loading" state', () => {
-    component.loading = true;
+    fixture.componentRef.setInput('loading', true);
     fixture.detectChanges();
     let loader = debugElement.query(By.css('[data-testingId="loader"]'));
     expect(loader).not.toBeNull();
 
-    component.loading = false;
+    fixture.componentRef.setInput('loading', false);
     fixture.detectChanges();
     loader = debugElement.query(By.css('[data-testingId="loader"]'));
     expect(loader).toBeNull();

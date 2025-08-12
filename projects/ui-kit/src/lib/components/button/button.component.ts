@@ -1,4 +1,9 @@
-import { Component, HostBinding, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostBinding,
+  Input,
+} from '@angular/core';
 import { toBooleanProperty } from '../../utils/type-coercion';
 import { CanDisableDirective } from '../../directives/can-disable/can-disable.directive';
 import { HasTabIndexDirective } from '../../directives/has-tab-index/has-tab-index.directive';
@@ -31,6 +36,7 @@ export type ButtonClasses = (typeof BUTTON_CLASSES)[ButtonAppearance];
       inputs: ['tabIndex', 'pauseFocusing: disabled'],
     },
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ButtonComponent {
   @Input()
