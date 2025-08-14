@@ -1,7 +1,7 @@
-import { DebugElement } from '@angular/core';
+import { Component, DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ButtonComponent } from './button.component';
+import { BUTTON_CLASSES, ButtonComponent } from './button.component';
 import { ButtonModule } from './button.module';
 
 describe('ButtonComponent', () => {
@@ -54,12 +54,63 @@ describe('ButtonComponent', () => {
   });
 
   describe('Disabled state', () => {
-    it('should apply necessary attributes to component host', () => {
+    beforeEach(() => {
       fixture.componentRef.setInput('disabled', true);
       fixture.detectChanges();
+    });
+
+    it('should apply necessary attributes to component host', () => {
       expect(element.classList).toContain('disabled');
       expect(element.getAttribute('disabled')).not.toBeNull();
       expect(element.getAttribute('tabindex')).toBe('-1');
     });
+
+    it('should prevent default behavior', () => {
+      const clickEvent = new PointerEvent('click', { cancelable: true });
+      debugElement.triggerEventHandler('click', clickEvent);
+      expect(clickEvent.defaultPrevented).toBe(true);
+    });
+  });
+});
+
+describe('ButtonComponent (with TestHost)', () => {
+  @Component({
+    template: `<button [loading]="loading" dfButton></button>`,
+  })
+  class ButtonTestHost {
+    loading = false;
+  }
+
+  let fixture: ComponentFixture<ButtonTestHost>;
+  let buttonDebugElement: DebugElement;
+  let buttonElement: HTMLElement;
+  let hostComponent: ButtonTestHost;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [ButtonModule],
+      declarations: [ButtonTestHost],
+    });
+    fixture = TestBed.createComponent(ButtonTestHost);
+    buttonDebugElement = fixture.debugElement.query(By.directive(ButtonComponent));
+    buttonElement = buttonDebugElement.nativeElement;
+    hostComponent = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should have "solid" appearance by default', () => {
+    expect(buttonElement.classList).toContain(BUTTON_CLASSES.solid);
+  });
+
+  it('should show loader icon in "loading" state', () => {
+    hostComponent.loading = true;
+    fixture.detectChanges();
+    let loader = buttonDebugElement.query(By.css('[data-testingId="loader"]'));
+    expect(loader).not.toBeNull();
+
+    hostComponent.loading = false;
+    fixture.detectChanges();
+    loader = buttonDebugElement.query(By.css('[data-testingId="loader"]'));
+    expect(loader).toBeNull();
   });
 });
