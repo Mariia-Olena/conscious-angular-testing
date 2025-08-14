@@ -75,7 +75,7 @@ describe('ButtonComponent', () => {
 
 describe('ButtonComponent (with TestHost)', () => {
   @Component({
-    template: `<button [loading]="loading" dfButton></button>`,
+    template: `<button [loading]="loading" dfButton>Testing Button</button>`,
   })
   class ButtonTestHost {
     loading = false;
@@ -92,10 +92,17 @@ describe('ButtonComponent (with TestHost)', () => {
       declarations: [ButtonTestHost],
     });
     fixture = TestBed.createComponent(ButtonTestHost);
-    buttonDebugElement = fixture.debugElement.query(By.directive(ButtonComponent));
+    buttonDebugElement = fixture.debugElement.query(
+      By.directive(ButtonComponent)
+    );
     buttonElement = buttonDebugElement.nativeElement;
     hostComponent = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  it('should properly project content', () => {
+    const label = buttonDebugElement.query(By.css('[data-testingId="label"]'));
+    expect(label.nativeElement.innerText).toBe('Testing Button')
   });
 
   it('should have "solid" appearance by default', () => {
